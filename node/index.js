@@ -3,6 +3,10 @@ var config = require('./config');
 var Steam = require('steam');
 var http = require('http');
 
+var SteamCommunity = require('steamcommunity');
+var SteamID = SteamCommunity.SteamID;
+var community = new SteamCommunity();
+
 var logOnOptions = config.logOnOptions;
 
 if (fs.existsSync(logOnOptions.shaSentryfile)) {
@@ -11,13 +15,15 @@ if (fs.existsSync(logOnOptions.shaSentryfile)) {
 	logOnOptions.authCode = authCode;
 }
 
+var steamAccounts = config.SteamAccounts;
+
 var steam = new Steam.SteamClient();
 var loggedOn = false;
 var messageQueue = [];
 
 steam.logOn(logOnOptions);
 
-steam.on('debug', console.log);
+//steam.on('debug', console.log);
 steam.on('error', console.log);
 
 steam.on('sentry', function(sentry) {
@@ -38,11 +44,20 @@ steam.on('loggedOff', function(result) {
 
 steam.on('relationships', function() {
 	// friends and groups loaded
-	config.SteamAccounts.forEach(function (steamAccount) {
+	steamAccounts.forEach(function (steamAccount) {
 		if (steam.friends[steamAccount] === undefined) {
 			console.log('Adding friend '+ steamAccount);
 			steam.addFriend(steamAccount);
 		}
+	});
+});
+
+steam.on('webSessionID', function(sessionID) {
+	//console.log('got a new session ID:', sessionID);
+	steam.webLogOn(function(cookies) {
+		//console.log('got a new cookie:', cookies);
+		community.setCookies(cookies);
+		process.nextTick(getGroupMembers);
 	});
 });
 
@@ -66,7 +81,7 @@ http.createServer(function (req, res) {
 console.log('Server running on port '+ config.listenPort);
 
 var broadcastMessage = function(message) {
-	config.SteamAccounts.forEach(function (steamAccount) {
+	steamAccounts.forEach(function (steamAccount) {
 		steam.sendMessage(steamAccount, message);
 	});
 	process.nextTick(processMessageQueue);
@@ -83,4 +98,29 @@ var processMessageQueue = function() {
 var queueMessage = function(message) {
 	messageQueue.push(message);
 	process.nextTick(processMessageQueue);
+};
+
+var getGroupMembers = function() {
+	if (config.SteamGroup !== null) {
+		community.getSteamGroup(config.SteamGroup, function(err, group) {
+			if (err === null) {
+				group.getMembers(function(err, members) {
+					if (err == null) {
+						steamAccounts = config.SteamAccounts;
+						var ownSteamID = community.steamID.getSteamID64();
+						members.forEach(function(member) {
+							member = member.getSteamID64();
+							if (member != ownSteamID) {
+								steamAccounts.push(member);
+							}
+						});
+					} else {
+						console.log('Error getting group members: '+ err);
+					}
+				});
+			} else {
+				console.log('Error getting group: '+ err);
+			}
+		});
+	}
 };

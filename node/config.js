@@ -1,5 +1,6 @@
 module.exports = {
-	SteamAccounts: [''],	// add 64-bit Steam Account ID's (as String) of users that should receive reports
+	SteamAccounts: [],	// add 64-bit Steam Account ID's (as String) of users that should receive reports
+	SteamGroup: null,	// SteamGroup to send message to
 	logOnOptions: {		// add account credentials; see README.md
 		accountName: '',
 		password: '',
