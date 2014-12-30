@@ -1,0 +1,22 @@
+{
+  "name": "steam-calladmin",
+  "version": "1.0.0",
+  "description": "Gateway for SourceMod plugin to relay CallAdmin reports to steam chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jabbink/node-steam-calladmin.git"
+  },
+  "author": "Jasper Abbink",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jabbink/node-steam-calladmin/issues"
+  },
+  "homepage": "https://github.com/jabbink/node-steam-calladmin",
+  "dependencies": {
+    "steam": "^0.6.7"
+  }
+}
