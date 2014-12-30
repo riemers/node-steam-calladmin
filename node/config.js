@@ -5,7 +5,7 @@ module.exports = {
 		accountName: '',
 		password: '',
 		authCode: '',
-		shaSentryfile: 'sentry'
+		sentry: 'sentry'
 	},
 	listenPort: 9876,	// port to listen on, must be the same as in the SourceMod plugin
 	reportPassword: '',	// required password, must be the same as in the SourceMod plugin
