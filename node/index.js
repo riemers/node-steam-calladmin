@@ -42,14 +42,18 @@ steam.on('loggedOff', function(result) {
 	console.log('Logged off :\'( Auto-retry');
 });
 
-steam.on('relationships', function() {
-	// friends and groups loaded
+var syncFriends = function() {
 	steamAccounts.forEach(function (steamAccount) {
 		if (steam.friends[steamAccount] === undefined) {
 			console.log('Adding friend '+ steamAccount);
 			steam.addFriend(steamAccount);
 		}
 	});
+};
+
+steam.on('relationships', function() {
+	// friends and groups loaded
+	syncFriends();
 });
 
 steam.on('webSessionID', function(sessionID) {
@@ -117,6 +121,7 @@ var getGroupMembers = function(callback) {
 							}
 						});
 						console.log('Group members:', steamAccounts);
+						syncFriends();
 						callback('done');
 					} else {
 						console.log('Error getting group members: '+ err);
