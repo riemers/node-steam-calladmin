@@ -75,7 +75,20 @@ http.createServer(function (req, res) {
 		if (body.length >= 2) {
 			var last = body.pop();
 			if (last == config.reportPassword) {
-				queueMessage(body.join('\n'));
+				if (req.url == '/report') {
+					var queuedMessage = util.format('New report on server: %s (%s:%d)\nReporter: %s (%s)\nTarget: %s (%s)\nReason: %s\nJoin server: steam://connect/%s:%d', 
+						body[0], body[1], body[2], body[3], body[4], body[5], body[6], body[7], body[1], body[2])
+					queueMessage(queuedMessage);
+				} else if (req.url == '/admin') {
+					var newAdmin = body[0];
+					var newAdminSteamId = new SteamID(newAdmin);
+					newAdminSteamId = newAdminSteamId.getSteamID64();
+					if (steamAccounts.indexOf(newAdminSteamId) == -1) {
+						steamAccounts.push(newAdminSteamId);
+						config.SteamAccounts.push(newAdminSteamId);		// not persistent, but necessary in order to prevent the "rescan" command from removing this person again
+						syncFriends();
+					}
+				}
 			}
 		}
 		res.writeHead(200, {'Content-Type': 'text/plain'});

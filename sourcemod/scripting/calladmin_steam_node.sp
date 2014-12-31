@@ -124,7 +124,7 @@ public CallAdmin_OnReportPost(client, target, const String:reason[])
 	GetClientAuthId(target, AuthId_Steam3, sTargetID, sizeof(sTargetID));
 	
 	decl String:sMessage[4096];
-	Format(sMessage, sizeof(sMessage), "New report on server: %s (%s:%d)\nReporter: %s (%s)\nTarget: %s (%s)\nReason: %s\nJoin server: steam://connect/%s:%d\n%s", sServerName, sServerIP, serverPort, sClientName, sClientID, sTargetName, sTargetID, reason, sServerIP, serverPort, g_sGatewayPassword);
+	Format(sMessage, sizeof(sMessage), "%s\n%s\n%d\n%s\n%s\n%s\n%s\n%s\n%s", sServerName, sServerIP, serverPort, sClientName, sClientID, sTargetName, sTargetID, reason, g_sGatewayPassword);
 
 	SteamChat_SendMessage(sMessage);
 }
@@ -139,7 +139,7 @@ static DLPack_Request = 0;
 SteamChat_SendMessage(const String:message[])
 {
 	decl String:sRequest[8192];
-	FormatEx(sRequest, sizeof(sRequest), "POST / HTTP/1.0\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-Length: %d\r\n\r\n%s", g_sGatewayHost, strlen(message), message);
+	FormatEx(sRequest, sizeof(sRequest), "POST /report HTTP/1.0\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-Length: %d\r\n\r\n%s", g_sGatewayHost, strlen(message), message);
 	
 	//LogMessage("%s", sRequest);
 	new Handle:hDLPack = CreateDataPack();
