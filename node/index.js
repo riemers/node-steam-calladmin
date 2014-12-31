@@ -2,6 +2,7 @@ var fs = require('fs');
 var config = require('./config');
 var Steam = require('steam');
 var http = require('http');
+var util = require('util');
 
 var SteamCommunity = require('steamcommunity');
 var SteamID = SteamCommunity.SteamID;
