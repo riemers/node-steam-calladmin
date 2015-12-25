@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/jabbink/node-steam-calladmin",
   "dependencies": {
-    "steam": "^0.6.7",
-    "steamcommunity": "^1.0.0"
+    "steam": "*",
+    "steamcommunity": "*",
+    "steam-weblogon": "*"
   }
 }
